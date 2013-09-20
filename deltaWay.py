@@ -48,20 +48,22 @@ def generatePath(entries,client):
                 splitPath.pop() 
     if not(allPath==[]):
         allPath.sort()
-        print allPath
+        #print allPath
         allPath = resolvePath(allPath,client)
     return allPath
 
 def setEmblem(allPath):
     for path in allPath:
+        path = path.replace(" ","\\ ")
         command = "gvfs-set-attribute "+path+" -t stringv metadata::emblems new"
-        print command
+        #print command
         commands.getoutput(command)
 
 def resetEmblem(allPath):
     for path in allPath:
+        path = path.replace(" ","\\")
         command = "gvfs-set-attribute "+path+" -t unset metadata::emblems"
-        print command
+        #print command
         commands.getoutput(command)
 
 def main():

@@ -75,7 +75,11 @@ def main():
     cursor = cursor_file.read()
     cursor_file.close()
     
-    cursor = client.delta(cursor)
+    try:
+        cursor = client.delta(cursor)
+    except:
+        print 'Check Your Internet Connection!'
+        exit(0)
 
     cursor_key = cursor.get('cursor')
     cursor_file = open('cursor','w')

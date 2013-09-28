@@ -7,14 +7,24 @@
 # Distributed under terms of the GNU GPL license.
 
 """
-Identify and change the status icon of the files that changed in dropbox folder.
+Identify and change the status icon of the files that are newly added in dropbox folder.
 """
 
 import dropbox
 import commands
+import subprocess
 import os
 
 PATH = '/home/sagar/Dropbox'
+
+def esccape_sequence(path):
+    """Put escape sequence before."""
+    chars = {r' ':r'\ ', r'(':r'\(', ')':r'\)', 
+                 r"[":r"\[", r"]":r"\]", r"{":r"\{", r"}":r"\}"}
+    for i in range(len(chars)):
+        temp = chars.items()[i]
+        path = path.replace(temp[0], temp[1])
+    return path
 
 def resolvePath(allPath):
     """Dropbox"""
@@ -44,13 +54,15 @@ def generatePath(allPath, flag):
         length = len(items)-2
         for i in range(length):
             temp = '/'.join(items)
-            temp = temp.replace(" ", r"\ ")
+            temp = esccape_sequence(temp)
             if temp not in sample:
                 sample.append(temp)
                 if flag:
                     command = "gvfs-set-attribute /"+temp+" -t stringv metadata::emblems new"            
+                    # print command
                 else:
                     command = "gvfs-set-attribute /"+temp+" -t unset metadata::emblems"
+                    # print command
                 commands.getoutput(command)
             items.pop()
 
@@ -62,41 +74,12 @@ def getpaths(entries):
             paths.append(entry[0])
     return paths
 
-def main():
-    """Get the cursor string."""
-    access_token = 'q0Lcd6-SLT0AAAAAAAAAAdjtKTjnvaEYn'\
-                    'v5rr77HrssoB9XSEXPdYHcoiQ0RilVT'
-    # user_id = '97122634'
-
-    client = dropbox.client.DropboxClient(access_token)
-    #print client.account_info()
-    
-    cursor_file = open('cursor','r')
-    cursor = cursor_file.read()
-    cursor_file.close()
-    
-    try:
-        cursor = client.delta(cursor)
-    except:
-        print 'Check Your Internet Connection!'
-        exit(0)
-
+def deltaway(cursor):
+    """Delta-way"""
     cursor_key = cursor.get('cursor')
     cursor_file = open('cursor','w')
     cursor_file.write(cursor_key)
     cursor_file.close()
-
-    """
-    count = 0
-    while(1):
-        cursor = client.delta(cursor)
-        if not(cursor.get('has_more')):
-            break
-        else:
-            cursor=cursor.get('cursor')
-        count += 1
-        print count
-    """
 
     previous_entry_file = open('entries', 'r')
     previous_entries = previous_entry_file.read()
@@ -119,7 +102,77 @@ def main():
         paths = resolvePath(paths)
         generatePath(paths, True)
     
-    commands.getoutput("nautilus")
+    subprocess.Popen(["nautilus"])
+
+def main():
+    """Get the cursor string."""
+    access_token = 'q0Lcd6-SLT0AAAAAAAAAAdjtKTjnvaEYnv5rr77HrssoB9XSEXPdYHcoiQ0RilVT'
+    # user_id = '97122634'
+
+    client = dropbox.client.DropboxClient(access_token)
+    try:
+        print client.account_info()
+    except Exception as exp:
+        if type(exp).__name__ == "RESTSocketError":
+            print 'Network Error. Check your Internet connection!'
+            exit(0)
+    
+    cursor_file = open('cursor','r')
+    cursor = cursor_file.read()
+    cursor_file.close()
+
+    count = 0
+    # print cursor
+    while(1):
+        try:
+            cursor = client.delta(cursor)
+        except Exception as exp:
+            if type(exp).__name__ == "RESTSocketError":
+                print 'Network Error. Check your Internet connection!'
+            else:
+                print type(exp).__name__
+                print "Continuing from start..."
+                cursor = ""
+                continue
+        if not(cursor.get('has_more')):
+            deltaway(cursor)
+            break
+        else:
+            cursor = cursor.get('cursor')
+        count += 1
+        print count
+    # print cursor.get('cursor')
+
+    ''' 
+    cursor_key = cursor.get('cursor')
+    cursor_file = open('cursor','w')
+    cursor_file.write(cursor_key)
+    cursor_file.close()
+
+    previous_entry_file = open('entries', 'r')
+    previous_entries = previous_entry_file.read()
+    if previous_entries:
+        previous_entries = eval(previous_entries)
+    previous_entry_file.close()
+
+    if previous_entries:
+        paths = getpaths(previous_entries)
+        paths = resolvePath(paths)
+        generatePath(paths, False)
+    
+    items = cursor.get('entries')
+    entry_file = open('entries', 'w')
+    entry_file.write(str(items))
+    entry_file.close()
+
+    if items:
+        paths = getpaths(items)
+        paths = resolvePath(paths)
+        generatePath(paths, True)
+    
+    subprocess.Popen(["nautilus"])
+    # print 'came here...'
+    '''
 
 if __name__ == '__main__':
     main()

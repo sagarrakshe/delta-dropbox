@@ -106,7 +106,7 @@ def deltaway(cursor):
 
 def main():
     """Get the cursor string."""
-    access_token = 'q0Lcd6-SLT0AAAAAAAAAAdjtKTjnvaEYnv5rr77HrssoB9XSEXPdYHcoiQ0RilVT'
+    access_token = ''
     # user_id = '97122634'
 
     client = dropbox.client.DropboxClient(access_token)

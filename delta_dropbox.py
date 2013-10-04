@@ -7,7 +7,7 @@
 # Distributed under terms of the GNU GPL license.
 
 """
-Identify and change the status icon of the files that are newly added in dropbox folder.
+Mark(add status-icon) the changed files in the dropbox folder.
 """
 
 import dropbox
@@ -18,16 +18,17 @@ import os
 PATH = '/home/sagar/Dropbox'
 
 def esccape_sequence(path):
-    """Put escape sequence before."""
+    """Insert the escape sequence in the path."""
     chars = {r' ':r'\ ', r'(':r'\(', ')':r'\)', 
-                 r"[":r"\[", r"]":r"\]", r"{":r"\{", r"}":r"\}"}
+            r"[":r"\[", r"]":r"\]", r"{":r"\{", r"}":r"\}", r'"':r"\"", r"'":r"\'"}
     for i in range(len(chars)):
         temp = chars.items()[i]
         path = path.replace(temp[0], temp[1])
     return path
 
 def resolvePath(allPath):
-    """Dropbox"""
+    """Dropbox treats the file names in a case-insensitive. Accepts case-insensitive path 
+    and returns case-sensitive path."""
     newPath = []
     for path in allPath:
         path_dir = path.split('/')
@@ -46,7 +47,7 @@ def resolvePath(allPath):
     return newPath
 
 def generatePath(allPath, flag):
-    """Recursively generate path of the parent folder and set/unset the emblems."""
+    """Generate all paths from the changed file(child) to the dropbox(parent) directory."""
     sample = []
     for path in allPath:
         items = path.split('/')
@@ -59,15 +60,13 @@ def generatePath(allPath, flag):
                 sample.append(temp)
                 if flag:
                     command = "gvfs-set-attribute /"+temp+" -t stringv metadata::emblems new"            
-                    # print command
                 else:
                     command = "gvfs-set-attribute /"+temp+" -t unset metadata::emblems"
-                    # print command
                 commands.getoutput(command)
             items.pop()
 
 def getpaths(entries):
-    """Doc string"""
+    """Extract paths"""
     paths = []
     for entry in entries:
         if entry[1]:
@@ -75,38 +74,36 @@ def getpaths(entries):
     return paths
 
 def deltaway(cursor):
-    """Delta-way"""
+    """Get path of the changed files and add status-icon to them."""
     cursor_key = cursor.get('cursor')
     cursor_file = open('cursor','w')
     cursor_file.write(cursor_key)
     cursor_file.close()
 
-    previous_entry_file = open('entries', 'r')
-    previous_entries = previous_entry_file.read()
-    if previous_entries:
-        previous_entries = eval(previous_entries)
-    previous_entry_file.close()
-
-    if previous_entries:
-        paths = getpaths(previous_entries)
-        paths = resolvePath(paths)
-        generatePath(paths, False)
-    
     items = cursor.get('entries')
-    entry_file = open('entries', 'w')
-    entry_file.write(str(items))
+
+    entry_file = open('entries', 'r')
+    temp = entry_file.read()
     entry_file.close()
+    entry_file = open('entries', 'w')
 
     if items:
         paths = getpaths(items)
         paths = resolvePath(paths)
+        if temp:
+            temp = eval(temp)
+            paths = paths + temp
+        entry_file.write(str(paths))
         generatePath(paths, True)
     
-    subprocess.Popen(["nautilus"])
+    entry_file.close()
+
+    print 'Refresh nautilus.'
+    # subprocess.Popen(["nautilus"])
 
 def main():
-    """Get the cursor string."""
-    access_token = ''
+    """Unmark previously marked(if any) files and get list of recently changed-files."""
+    access_token = 'B8nDPW7sVo4AAAAAAAAAAbp7OdsfyDuJCS4UxaJqngbNg6ugaAY8l5jIpm4hfttu'
     # user_id = '97122634'
 
     client = dropbox.client.DropboxClient(access_token)
@@ -117,6 +114,19 @@ def main():
             print 'Network Error. Check your Internet connection!'
             exit(0)
     
+    previous_entry_file = open('entries', 'r')
+    previous_entries = previous_entry_file.read()
+    if previous_entries:
+        previous_entries = eval(previous_entries)
+    previous_entry_file.close()
+
+    if previous_entries:
+        paths = previous_entries
+        generatePath(paths, False)
+
+    previous_entry_file = open('entries', 'w')
+    previous_entry_file.close()
+
     cursor_file = open('cursor','r')
     cursor = cursor_file.read()
     cursor_file.close()
@@ -129,50 +139,22 @@ def main():
         except Exception as exp:
             if type(exp).__name__ == "RESTSocketError":
                 print 'Network Error. Check your Internet connection!'
-            else:
-                print type(exp).__name__
-                print "Continuing from start..."
-                cursor = ""
-                continue
+            elif type(exp).__name__ == "ErrorResponse":
+                print 'Need to generate cursor again. Invalid cursor.'
+                # print type(exp).__name__
+                # print "Continuing from start..."
+                # cursor = ""
+                # continue
+                exit(0)
         if not(cursor.get('has_more')):
             deltaway(cursor)
             break
         else:
+            print len(cursor.get('entries'))
+            deltaway(cursor)
             cursor = cursor.get('cursor')
         count += 1
         print count
-    # print cursor.get('cursor')
-
-    ''' 
-    cursor_key = cursor.get('cursor')
-    cursor_file = open('cursor','w')
-    cursor_file.write(cursor_key)
-    cursor_file.close()
-
-    previous_entry_file = open('entries', 'r')
-    previous_entries = previous_entry_file.read()
-    if previous_entries:
-        previous_entries = eval(previous_entries)
-    previous_entry_file.close()
-
-    if previous_entries:
-        paths = getpaths(previous_entries)
-        paths = resolvePath(paths)
-        generatePath(paths, False)
-    
-    items = cursor.get('entries')
-    entry_file = open('entries', 'w')
-    entry_file.write(str(items))
-    entry_file.close()
-
-    if items:
-        paths = getpaths(items)
-        paths = resolvePath(paths)
-        generatePath(paths, True)
-    
-    subprocess.Popen(["nautilus"])
-    # print 'came here...'
-    '''
 
 if __name__ == '__main__':
     main()

@@ -1,10 +1,14 @@
 ##What is delta-dropbox?
 As they say, *Neccesity is the mother of Invention!*. Story behind `delta-dropbox.py` is I had a shared folder in dropbox with few friends for a project. All of them  used to add many files, directories to these folder. Now when these files used to get sync with my local Dropbox directory. Dropbox notifies-
 
-It specifies the total no. of files added to dropbox but it does not specifies which and where they were added(if files were added to differen locations). I manually need to figure out which files were added and where. Consider a case where 100 files are changed over all your dropbox folder how to exactly figure out which files are added and where.<br>
+![dropbo-notify](https://raw.github.com/sagarrakshe/delta-dropbox/master/_assets/dropbox-notify.png)
+
+It specifies the total no. of files added to dropbox but it does not specifies which and where they were added(if files were added to different locations). I manually need to figure out which files were added and where. Consider a case where 100 files are changed over all your dropbox folder how to exactly figure out which files are added and where.<br>
 
 So `delta-dropbox.py` marks these newly added files. On subsequent execution unmark the previously marked files and then mark again 
 newly added, modified files if any.
+
+![dropbo-mark](https://raw.github.com/sagarrakshe/delta-dropbox/master/_assets/dropbox-mark.png)
 
 ##Installation
 
@@ -20,10 +24,8 @@ Follow these steps to setup Dropbox app:
 
 1. You will need to create Dropbox app. Go to this url [dropbox app](https://www.dropbox.com/developers/apps)
     Follow the steps and set the permission type of the app.
-
 2. On successful creation of app, Dropbox will provide with `app_key` and `app_secret`. 
     Do not publicize these app credentials.
-
 3. Insert the `app_key` and `app_secret` in the `client.json` file.
 
 ###Setup

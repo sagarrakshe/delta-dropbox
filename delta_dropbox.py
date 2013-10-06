@@ -14,6 +14,7 @@ import dropbox
 import commands
 import subprocess
 import os
+import json
 
 PATH = '/home/sagar/Dropbox'
 
@@ -75,10 +76,10 @@ def getpaths(entries):
 
 def deltaway(cursor):
     """Get path of the changed files and add status-icon to them."""
-    cursor_key = cursor.get('cursor')
-    cursor_file = open('cursor','w')
-    cursor_file.write(cursor_key)
-    cursor_file.close()
+    # cursor_key = cursor.get('cursor')
+    # cursor_file = open('cursor','w')
+    # cursor_file.write(cursor_key)
+    # cursor_file.close()
 
     items = cursor.get('entries')
 
@@ -102,13 +103,17 @@ def deltaway(cursor):
     # subprocess.Popen(["nautilus"])
 
 def main():
-    """Unmark previously marked(if any) files and get list of recently changed-files."""
-    access_token = 'B8nDPW7sVo4AAAAAAAAAAbp7OdsfyDuJCS4UxaJqngbNg6ugaAY8l5jIpm4hfttu'
-    # user_id = '97122634'
+    """Unmark previously marked files(if any) and get list of recently changed-files."""
+
+    client_data = open("client.json") 
+    credentials = json.load(client_data)
+    access_token = credentials["access_token"]
+    assert(len(access_token)), "Empty 'access_token'." 
 
     client = dropbox.client.DropboxClient(access_token)
     try:
-        print client.account_info()
+        info = client.account_info()
+        print "Name: %s\nEmail: %s" % (info.get('display_name'), info.get('email'))
     except Exception as exp:
         if type(exp).__name__ == "RESTSocketError":
             print 'Network Error. Check your Internet connection!'
@@ -132,7 +137,11 @@ def main():
     cursor_file.close()
 
     count = 0
-    # print cursor
+    flag = 0
+
+    if not(cursor):
+        flag = 1
+
     while(1):
         try:
             cursor = client.delta(cursor)
@@ -140,18 +149,20 @@ def main():
             if type(exp).__name__ == "RESTSocketError":
                 print 'Network Error. Check your Internet connection!'
             elif type(exp).__name__ == "ErrorResponse":
-                print 'Need to generate cursor again. Invalid cursor.'
-                # print type(exp).__name__
-                # print "Continuing from start..."
-                # cursor = ""
-                # continue
-                exit(0)
-        if not(cursor.get('has_more')):
+                print 'Invalid cursor key! Need to generate cursor again.'
+                flag = 1
+                cursor = ""
+                continue
+        #write cursor to the cursor-file.
+        cursor_key = cursor.get('cursor')
+        cursor_file = open('cursor','w')
+        cursor_file.write(cursor_key)
+        cursor_file.close()
+        if flag == 0:
             deltaway(cursor)
+        if not(cursor.get('has_more')):
             break
         else:
-            print len(cursor.get('entries'))
-            deltaway(cursor)
             cursor = cursor.get('cursor')
         count += 1
         print count

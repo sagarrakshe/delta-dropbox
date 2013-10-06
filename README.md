@@ -1,8 +1,7 @@
 ##What is delta-dropbox?
 As they say, *Neccesity is the mother of Invention!*. Story behind `delta-dropbox.py` is I had a shared folder in dropbox with few friends for a project. All of them  used to add many files, directories to these folder. Now when these files used to get sync with my local Dropbox directory. Dropbox notifies-
 
-x files were added to your dropbox folder but it does not specifies which and where they were added(if files were added to differen locations). I manually need to figure out which files were added and where. Consider a case where 100 files are changed over all your 
-dropbox folder how to exactly figure out which files are added and where.<br>
+It specifies the total no. of files added to dropbox but it does not specifies which and where they were added(if files were added to differen locations). I manually need to figure out which files were added and where. Consider a case where 100 files are changed over all your dropbox folder how to exactly figure out which files are added and where.<br>
 
 So `delta-dropbox.py` marks these newly added files. On subsequent execution unmark the previously marked files and then mark again 
 newly added, modified files if any.
@@ -29,9 +28,11 @@ Follow these steps to setup Dropbox app:
 
 ###Setup
 
-Run the `setup.py` file. <rbr>
-It will open a link in browser. Click "Allow" to give access to that app. Copy the given code and paste in the terminal.
-On successful execution of `setup.py`, it will print `access_token`and `user_id`. Add `access_token` and `user_id` to `client.json`.
+* Run the `setup.py` file. <br>
+* It will open a link in browser. 
+* Click "Allow" to give access to that app. Copy the given code and paste in the terminal.
+* On successful execution of `setup.py`, it will print `access_token`and `user_id`. Add `access_token` and `user_id` to `client.json`.
+
 Two new files will be created by `setup.py`: `cursor` and `entries`.
 
 Add your Dropbox directory path to `path.json` file.
@@ -42,5 +43,5 @@ It will take time to execute, depending on the total files in dropbox folder.
 
 ##Issues
 * Tested only on Ubuntu.
-* Execute `delta-dropbox.py` only when Dropbox has sync all files or Dropbox state is Idle.
+* Execute `delta-dropbox.py` only when Dropbox has sync all files or Dropbox folder status is Idle.
 

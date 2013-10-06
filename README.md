@@ -17,8 +17,8 @@ I have used the [delta-api](https://www.dropbox.com/static/developers/dropbox-py
 ###Prerequisite
 
     dropbox
-You can install using pip:
-    `sudo pip install dropbox`
+You can install using pip:<br>
+    sudo pip install dropbox
 
 ###Dropbox-setup
 

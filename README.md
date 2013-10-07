@@ -13,9 +13,9 @@ I have used the [delta-api](https://www.dropbox.com/static/developers/dropbox-py
 
 ##Test
 Basically, the code will work only if the command `gvfs-set-attribute` works on your machine because this command sets the file attribute. So to test whether it works or not follos the steps: 
-    $ git clone https://github.com/sagarrakshe/delta-dropbox
-    $ cd delta-dropbox
-    $ sh test.sh
+`$ git clone https://github.com/sagarrakshe/delta-dropbox`<br>
+`$ cd delta-dropbox`<br>
+`$ sh test.sh`<br>
 
 Nautilus will open, if a status-icon is added to the `test.sh`(*star* or *plus* icon depending upon the version of gnome-shell) then it's fine(see the image below). Else try refreshing the nautilus even if it doesn't set then the code won't work for you.
 

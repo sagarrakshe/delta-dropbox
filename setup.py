@@ -25,5 +25,11 @@ try:
     print 'user_id: ', user_id
     print '\nAdd the "access_token" and "user_id" to "client.json" file.'
 
+    cursor = open('cursor','w')
+    cursor.close()
+
+    entries = open('entries','w')
+    entries.close()
+
 except dropbox.rest.ErrorResponse, e:
     print 'Error: %s' % (e)

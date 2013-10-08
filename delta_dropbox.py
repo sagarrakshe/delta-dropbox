@@ -16,7 +16,8 @@ import subprocess
 import os
 import json
 
-PATH = '/home/sagar/Dropbox'
+# PATH = '/home/sagar/Dropbox'
+global PATH
 
 def esccape_sequence(path):
     """Insert the escape sequence in the path."""
@@ -104,6 +105,13 @@ def deltaway(cursor):
 
 def main():
     """Unmark previously marked files(if any) and get list of recently changed-files."""
+
+    global PATH
+
+    path_data = open("path.json")
+    p = json.load(path_data)
+    PATH = p["dropbox"]
+    assert(len(PATH)),"Add dropbox path to path.json"
 
     client_data = open("client.json") 
     credentials = json.load(client_data)

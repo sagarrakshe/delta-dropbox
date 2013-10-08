@@ -25,14 +25,14 @@ Nautilus will open, if a status-icon is added to the `test.sh`(*star* or *plus* 
 
 ##Installation
 
-###Prerequisite
+##Prerequisite
 
     dropbox
 You can install using pip:
 
     $ sudo pip install dropbox
 
-###Dropbox App Setup
+##Dropbox App Setup
 
 Follow these steps to setup Dropbox app:
 
@@ -40,7 +40,7 @@ Follow these steps to setup Dropbox app:
 2. On successful creation of app, Dropbox will provide with `app_key` and `app_secret`. Do not publicize these app credentials.
 3. Insert the `app_key` and `app_secret` in the `client.json` file.
 
-###Setup
+##Setup
 
 * Run the `setup.py` file. <br>
 * It will open a link in browser. 

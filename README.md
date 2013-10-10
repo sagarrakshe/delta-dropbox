@@ -6,7 +6,7 @@ As they say, *Neccesity is the mother of Invention!*. Story behind `delta-dropbo
 But dropbox specifies the total no. of files added to dropbox but it doesn't specifies which files and where they were added. I need to figure out which files were added and where. Consider a case where 100 files are changed in your dropbox folder! It would be tedious.<br>
 
 So `delta-dropbox.py` is a hack that marks (adds `status-icon`) these newly added files. On subsequent execution unmarks the previously marked files and then mark newly added, modified files if any. <br>
-The star on **Temp** denotes it was recently added. To guide to the changed file, all files or directories are marked in the path. In this case the path is **Dropbox/Experiment/Temp** so *Dropbox*, *Experiment* and *Temp* will be marked. So user is guided when he enters in Dropbox folder. 
+The star on **Temp** denotes it was recently added. To guide to the changed file, all files or directories are marked in the path. In this case the path is **Dropbox/Experiment/Temp** so *Dropbox*, *Experiment* and *Temp* will be marked. So user is guided when he enters in Dropbox folder to the file. 
 
 ![dropbox-mark](https://raw.github.com/sagarrakshe/delta-dropbox/master/_assets/dropbox-mark.png)
 
@@ -62,4 +62,4 @@ Open nautilus or refresh it. Check if the added files got marked or not.
 * Tested only on Ubuntu, (will work where `gvfs-set attribute` works).
 * Execute `delta-dropbox.py` only when Dropbox has sync all files or Dropbox folder status is Idle or else some files which are syncrhonizing may not be marked.
 * Need to execute the code manually.
-* Effects visible only in file browser(nautilus) and not through command-line.
+* Effects visible only in file browser(nautilus) and not in Terminal.

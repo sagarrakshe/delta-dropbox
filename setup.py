@@ -21,9 +21,22 @@ code = raw_input("Enter the authorization code here: ").strip()
 
 try:
     access_token, user_id = flow.finish(code)
+
     print '\naccess_token: ', access_token
     print 'user_id: ', user_id
-    print '\nAdd the "access_token" and "user_id" to "client.json" file.'
+    
+    auth_info={'access_token': access_token, 'user_id':user_id}
+    
+    with open('client.json','r') as c_json:
+        app_key=json.load(c_json)
+        c_json.close()
+    
+    with open('client.json','w') as c_json:    
+        app_key.update(auth_info)
+        c_json.write(json.dumps(app_key))
+        c_json.close()
+    
+    #print '\nAdd the "access_token" and "user_id" to "client.json" file.'
 
     cursor = open('cursor','w')
     cursor.close()

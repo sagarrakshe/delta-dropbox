@@ -100,7 +100,6 @@ def deltaway(cursor):
     
     entry_file.close()
 
-    print 'Refresh nautilus.'
     # subprocess.Popen(["nautilus"])
 
 def main():
@@ -174,6 +173,8 @@ def main():
             cursor = cursor.get('cursor')
         count += 1
         print count
+
+    print 'Refresh nautilus.'
 
 if __name__ == '__main__':
     main()
